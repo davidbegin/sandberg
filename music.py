@@ -11,6 +11,8 @@ import mingus.core.scales as scales
 from mingus.containers.note_container import NoteContainer
 from mingus.containers import Bar
 from mingus.containers import Track
+from mingus.containers.instrument import MidiInstrument
+
 
 from mingus.midi.midi_file_out import MidiFile as MidiFileOut
 from mingus.midi.midi_file_out import write_NoteContainer
@@ -79,7 +81,14 @@ if __name__ ==  "__main__":
         if len(song) % 2 == 0 and next_chord_int in [1,6]:
             break
 
-    track = Track()
+    instrument = MidiInstrument()
+
+    # Ocarina
+    instrument.instrument_nr = 79
+
+    instrument.instrument_nr = random.randint(0, len(MidiInstrument.names))
+
+    track = Track(instrument)
     chord_chart = convert_roots_to_chord_chart(song, scale_notes[:-1])
     chord_progression = progressions.to_chords(chord_chart, key) 
 
@@ -89,9 +98,10 @@ if __name__ ==  "__main__":
             bar = Bar(key, (4, 4))
             nc = NoteContainer(chord)
             bar.place_notes(nc, 4)
+            bar.place_notes(nc, 3)
             bar.place_notes(nc, 4)
-            bar.place_notes(nc, 4)
-            bar.place_notes(nc, 4)
+            bar.place_notes(nc, 5)
+            bar.place_notes(nc, 8)
             track.add_bar(bar)
 
     write_Track("midi_files/test.mid", track, bpm=120)
