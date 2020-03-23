@@ -11,13 +11,16 @@ import mingus.core.scales as scales
 from mingus.containers.note_container import NoteContainer
 from mingus.containers import Bar
 from mingus.containers import Track
+from mingus.containers import Composition
 from mingus.containers.instrument import MidiInstrument
+from mingus.containers.instrument import MidiPercussionInstrument
 
 
 from mingus.midi.midi_file_out import MidiFile as MidiFileOut
 from mingus.midi.midi_file_out import write_NoteContainer
 from mingus.midi.midi_file_out import write_Bar
 from mingus.midi.midi_file_out import write_Track
+from mingus.midi.midi_file_out import write_Composition
 
 
 
@@ -41,8 +44,9 @@ CLASSICAL_HARMONY = {
 # This how we create genres
 CHORD_RHYTHMS = [
         [4, 4, 4, 4],
-        [4, 3, 4, 5],
-        [8, 8, 4, 4, 4]
+        # [4, 3, 4, 5],
+        # [8, 8, 4, 4, 4],
+        # [8, 8, 8, 8, 8, 8, 8, 8]
 ]
 
 
@@ -80,7 +84,8 @@ def generate_progression():
     song = [ ]
     key_int     = random.randint(0,11)
     key         = notes.int_to_note(key_int)
-    scale       = scales.Diatonic(key, (3,7))
+    # scale       = scales.Diatonic(key, (3,7))
+    scale       = scales.NaturalMinor(key)
     scale_notes = scale.ascending()
     song.append(key)
 
@@ -96,10 +101,12 @@ def generate_progression():
             break
 
     chord_chart = convert_roots_to_chord_chart(song, scale_notes[:-1])
-    chord_progression = progressions.to_chords(chord_chart, key) 
+    chord_chart_2 = [ progressions.substitute_major_for_minor(chord[0], 0)[0] for chord in chord_chart] 
+    chord_progression = progressions.to_chords(chord_chart_2, key) 
+
     chord_progression_nums = [ scale_notes.index(note) + 1 for note in song ]
 
-    song_file_name = f"{key}-{instrument_name.lower().replace(' ', '_')}-{len(song)}"
+    song_file_name = f"{key}-{len(song)}"
     with open(f'songs/{song_file_name}.csv', 'w') as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(chord_progression_nums)
@@ -114,28 +121,80 @@ def load_chord_progression(chord_progression_file_name):
         reader = csv.reader(csvfile)
         chord_progression_nums = list(reader)[0]
 
-        scale_notes = scales.Diatonic(key, (3,7)).ascending()
+        scale_notes = scales.NaturalMinor(key).ascending()
         song = [ scale_notes[int(chord_num) - 1] for chord_num in chord_progression_nums ]
         chord_chart = convert_roots_to_chord_chart(song, scale_notes[:-1])
-        chord_progression = progressions.to_chords(chord_chart, key) 
+        # 
+        chord_progression = progressions.to_chords(chord_chart, key + "m") 
     return key, chord_progression
 
     
+def find_instrument(args):
+    print(MidiInstrument.names)
 
-def generate_midi(key, chord_progression):
-    track = Track(instrument)
-    # Can't handle Sharp keys for some reason
+    if args.random_instrument:
+        instrument_nr = random.randint(0, len(MidiInstrument.names))
+        instrument_nr = 40
+    else:
+        instrument_nr = MidiInstrument.names.index(args.instrument)
+
+    instrument = MidiInstrument()
+    instrument_name = MidiInstrument.names[instrument_nr]
+    instrument.instrument_nr = instrument_nr
+    print(f"Instrument: {MidiInstrument.names[instrument_nr]}")
+    print(f"Instrument: {len(MidiInstrument.names)}")
+
+    return instrument
+
+
+def generate_midi(instrument, key, chord_progression):
+    composition = Composition()
     how_many_bars = 16
+
+    drums = MidiPercussionInstrument()
+    drums_instrument = MidiInstrument()
+    drums_instrument.instrument_nr = 115
+    # drums.instrPument_nr = random.randint(0, len(drums.mapping.keys()))
+    # drums.instrument_nr = 115
+    drum_track = Track(drums_instrument)
+    track = Track(instrument)
+
     for _ in range(how_many_bars):
+        bar = Bar(key, (4, 4))
+        hc = NoteContainer([drums.hand_clap()])
+        # for length in [1]:
+        # for length in random.sample(CHORD_RHYTHMS, 1)[0]:
+        #   bar.place_notes(hc, length)
+        bar.place_notes(hc, 1)
+        drum_track.add_bar(bar)
+
         for chord in chord_progression:
             bar = Bar(key, (4, 4))
             nc = NoteContainer(chord)
-
             for length in random.sample(CHORD_RHYTHMS, 1)[0]:
                 bar.place_notes(nc, length)
             track.add_bar(bar)
 
-    write_Track("midi_files/test.mid", track, bpm=120)
+
+    composition.add_track(drum_track)
+    composition.add_track(track)
+    breakpoint()
+
+
+    # how_many_bars = 16
+    # for _ in range(how_many_bars):
+    #     for chord in chord_progression:
+    #         bar = Bar(key, (4, 4))
+    #         nc = NoteContainer(chord)
+    #         # nc = NoteContainer([drums.hand_clap()])
+
+    #         for length in [1]:
+    #             bar.place_notes(nc, length)
+    #         drum_track.add_bar(bar)
+
+
+    write_Composition("midi_files/test.mid", composition)
+
 
 # We need minor
 if __name__ ==  "__main__":
@@ -151,17 +210,6 @@ if __name__ ==  "__main__":
 
     args = parser.parse_args()
 
-    print(MidiInstrument.names)
-
-    if args.random_instrument:
-        instrument_nr = random.randint(0, len(MidiInstrument.names))
-    else:
-        instrument_nr = MidiInstrument.names.index(args.instrument)
-
-    instrument = MidiInstrument()
-    instrument_name = MidiInstrument.names[instrument_nr]
-    instrument.instrument_nr = instrument_nr
-    print(f"Instrument: {MidiInstrument.names[instrument_nr]}")
 
     # pylang: start on the I and end on the II = new age music
     if args.chord_progression:
@@ -169,6 +217,7 @@ if __name__ ==  "__main__":
     else:
         key, chord_progression = generate_progression()
 
-    generate_midi(key, chord_progression)
+    instrument = find_instrument(args)
+    generate_midi(instrument, key, chord_progression)
 
 

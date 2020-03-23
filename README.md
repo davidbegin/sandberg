@@ -16,6 +16,8 @@ Generate songs, passing in various options to change things like:
 - Instruments
 - Harmonic Complexity
 - BPM
+- Rhythm Choices
+- Drums
 
 ## Install Requirements
 
@@ -24,4 +26,3 @@ python -m venv venv
 source venv/bin/activate
 pip install -r requirements/runtime.in
 ```
-
