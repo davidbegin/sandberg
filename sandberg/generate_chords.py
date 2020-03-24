@@ -88,4 +88,3 @@ def chord_fmt(chord, chord_position):
     elif chord_position not in [1, 4, 5]:
         return f"{chord}m"
     return chord
-

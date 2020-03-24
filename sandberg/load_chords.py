@@ -5,6 +5,7 @@ import mingus.core.progressions as progressions
 
 from sandberg.music import convert_roots_to_chord_chart
 
+
 def load_chord_progression(chord_progression_file_name):
     key = chord_progression_file_name.split("-")[0]
 

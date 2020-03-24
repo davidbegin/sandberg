@@ -36,4 +36,5 @@ if __name__ == "__main__":
         key, chord_progression = generate_progression()
 
     instrument = find_instrument(args)
+
     generate_midi(instrument, key, chord_progression)
