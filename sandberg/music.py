@@ -17,10 +17,10 @@ def find_instrument(args):
     # print_instrument_options()
     instrument = MidiInstrument()
 
-    if args.random_instrument:
-        instrument_nr = random.randint(0, len(MidiInstrument.names))
-    else:
+    if args.instrument:
         instrument_nr = MidiInstrument.names.index(args.instrument)
+    elif args.random_instrument:
+        instrument_nr = random.randint(0, len(MidiInstrument.names))
 
     instrument.instrument_nr = instrument_nr
 
