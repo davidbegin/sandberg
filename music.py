@@ -3,7 +3,7 @@ import argparse
 import mingus.core.chords as chords
 
 from sandberg.load_chords import load_chord_progression
-from sandberg.generate_chords import generate_progression
+from sandberg.generate_chords import generate_progression, expand_progression
 from sandberg.music import find_instrument
 from sandberg.midi_maker import generate_midi
 
@@ -26,14 +26,18 @@ if __name__ == "__main__":
         help="The scale to use for the song. Ex: Major, NaturalMinor, Locrian, Lydian",
     )
     parser.add_argument(
-        "--instrument",
-        dest="instrument",
-        default="Ocarina",
-        help="The instrument to use for the song",
+        "--instrument", dest="instrument", help="The instrument to use for the song",
     )
+    # "1,4,5"
+    # "I,II,IV,V"
     parser.add_argument(
         "--chord-progression",
         dest="chord_progression",
+        help="A str of a chord progression you want to use. Ex: I,IV,V",
+    )
+    parser.add_argument(
+        "--chord-progression-file",
+        dest="chord_progression_file",
         help="A CSV file of a chord progression you want to use",
     )
     parser.add_argument(
@@ -54,7 +58,11 @@ if __name__ == "__main__":
 
     # We could also specify it all from the command line
     if args.chord_progression:
-        key, chord_progression = load_chord_progression(args.chord_progression)
+        key, scale, chord_progression = expand_progression(args.chord_progression)
+    elif args.chord_progression_file:
+        key, scale, chord_progression = load_chord_progression(
+            args.chord_progression_file, key=args.key, scale=args.scale
+        )
     else:
         # This needs to take in the key and scale
         key, scale, chord_progression = generate_progression(

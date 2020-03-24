@@ -7,6 +7,7 @@ import mingus.core.scales as scales
 import mingus.core.progressions as progressions
 
 from sandberg.music import convert_roots_to_chord_chart
+from sandberg.utils import key_finder
 
 
 # Fux / Bach Rules
@@ -21,6 +22,19 @@ CLASSICAL_HARMONY = {
 }
 
 
+def expand_progression(chord_progression, key=None, scale="Major"):
+    chord_chart = [chord.strip() for chord in chord_progression.split(",")]
+    if key is None:
+        key = key_finder()
+
+    scale_notes, scale_name = scale_finder(key, scale_name=scale)
+    chord_progression = progressions.to_chords(chord_chart, key)
+    root_notes = [chord[0] for chord in chord_progression]
+    chord_progression_nums = [scale_notes.index(note) + 1 for note in root_notes]
+    save_song(key, chord_progression_nums)
+    return key, scale, chord_progression
+
+
 def generate_progression(key=None, scale=None):
     root_notes = []
     if key is None:
@@ -30,6 +44,7 @@ def generate_progression(key=None, scale=None):
     root_notes.append(key)
 
     next_chord, next_chord_int = progress(scale_notes, chord_position=1, bar_position=2)
+
     root_notes.append(next_chord)
 
     while True:
@@ -52,9 +67,7 @@ def generate_progression(key=None, scale=None):
 
     chord_progression = progressions.to_chords(chord_chart, key)
     chord_progression_nums = [scale_notes.index(note) + 1 for note in root_notes]
-
     save_song(key, chord_progression_nums)
-
     return key, scale, chord_progression
 
 
@@ -63,7 +76,8 @@ def generate_progression(key=None, scale=None):
 def save_song(key, chord_progression_nums):
     length = len(chord_progression_nums)
     second_to_last = roman.toRoman(chord_progression_nums[-2])
-    root_notes_file_name = f"{key}-{second_to_last}-{length}"
+    root_notes_file_name = f"song"
+    # root_notes_file_name = f"{key}-{second_to_last}-{length}"
 
     with open(f"songs/{root_notes_file_name}.csv", "w") as csvfile:
         writer = csv.writer(csvfile)
@@ -107,7 +121,3 @@ def scale_finder(key, scale_name="Major"):
     func = getattr(scales, scale_name, func_not_found)
     scale = func(key)
     return scale.ascending(), scale_name
-
-
-def key_finder():
-    return notes.int_to_note(random.randint(0, 11))

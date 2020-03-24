@@ -13,6 +13,7 @@ def print_instrument_options():
     print(MidiInstrument.names)
 
 
+# TODO: this shouldn't take in args
 def find_instrument(args):
     # print_instrument_options()
     instrument = MidiInstrument()
