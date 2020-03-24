@@ -69,3 +69,5 @@ if __name__ == "__main__":
     print(f"Scale: {scale}")
     print(f"Chord Chart: {' - '.join(chord_chart)}")
     print("\n")
+
+    generate_midi(instrument, key, chord_progression)

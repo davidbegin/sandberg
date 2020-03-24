@@ -43,19 +43,31 @@ def generate_progression(key=None, scale=None):
             break
 
     chord_chart = convert_roots_to_chord_chart(root_notes, scale_notes[:-1])
-    chord_chart_2 = [
-        progressions.substitute_major_for_minor(chord[0], 0)[0] for chord in chord_chart
-    ]
-    chord_progression = progressions.to_chords(chord_chart_2, key)
 
+    # This is minor converted
+    # chord_chart_2 = [
+    #     progressions.substitute_major_for_minor(chord[0], 0)[0] for chord in chord_chart
+    # ]
+    # chord_progression = progressions.to_chords(chord_chart_2, key)
+
+    chord_progression = progressions.to_chords(chord_chart, key)
     chord_progression_nums = [scale_notes.index(note) + 1 for note in root_notes]
 
-    root_notes_file_name = f"{key}-{len(root_notes)}"
+    save_song(key, chord_progression_nums)
+
+    return key, scale, chord_progression
+
+
+# How can we name randomly generated chord progressions?
+# How SHOULD we name randomly generated chord progressions?
+def save_song(key, chord_progression_nums):
+    length = len(chord_progression_nums)
+    second_to_last = roman.toRoman(chord_progression_nums[-2])
+    root_notes_file_name = f"{key}-{second_to_last}-{length}"
+
     with open(f"songs/{root_notes_file_name}.csv", "w") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(chord_progression_nums)
-
-    return key, scale, chord_progression
 
 
 def progress(scale_notes, *, chord_position, bar_position):
