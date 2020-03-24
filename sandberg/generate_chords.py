@@ -21,28 +21,13 @@ CLASSICAL_HARMONY = {
 }
 
 
-def scale_finder(key):
-    scale = scales.Major(key)
-    # scale = scales.NaturalMinor(key)
-    return scale.ascending()
-
-
-def key_finder():
-    return notes.int_to_note(random.randint(0, 11))
-
-
-def generate_progression(key=None):
-    # Root Notes
+def generate_progression(key=None, scale=None):
     root_notes = []
     if key is None:
         key = key_finder()
 
-    scale_notes = scale_finder(key)
-
+    scale_notes, scale_name = scale_finder(key, scale_name=scale)
     root_notes.append(key)
-
-    # print(f"I: {key}")
-    # Getting the 2nd
 
     next_chord, next_chord_int = progress(scale_notes, chord_position=1, bar_position=2)
     root_notes.append(next_chord)
@@ -70,7 +55,7 @@ def generate_progression(key=None):
         writer = csv.writer(csvfile)
         writer.writerow(chord_progression_nums)
 
-    return key, chord_progression
+    return key, scale, chord_progression
 
 
 def progress(scale_notes, *, chord_position, bar_position):
@@ -100,3 +85,17 @@ def chord_fmt(chord, chord_position):
     elif chord_position not in [1, 4, 5]:
         return f"{chord}m"
     return chord
+
+
+def scale_finder(key, scale_name="Major"):
+    def func_not_found(key):
+        print(f"No Scale: {scale_name} Found!")
+        return scales.Major(key)
+
+    func = getattr(scales, scale_name, func_not_found)
+    scale = func(key)
+    return scale.ascending(), scale_name
+
+
+def key_finder():
+    return notes.int_to_note(random.randint(0, 11))
