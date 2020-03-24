@@ -2,7 +2,6 @@ import csv
 import random
 
 import roman
-
 import mingus.core.notes as notes
 import mingus.core.scales as scales
 import mingus.core.progressions as progressions
@@ -22,56 +21,69 @@ CLASSICAL_HARMONY = {
 }
 
 
-def generate_progression():
-    # Root Notes
-    song = []
-    key_int = random.randint(0, 11)
-    key = notes.int_to_note(key_int)
-    # scale       = scales.Diatonic(key, (3,7))
-    scale = scales.NaturalMinor(key)
-    scale_notes = scale.ascending()
-    song.append(key)
+def scale_finder(key):
+    scale = scales.Major(key)
+    # scale = scales.NaturalMinor(key)
+    return scale.ascending()
 
-    print(f"I: {key}")
+
+def key_finder():
+    return notes.int_to_note(random.randint(0, 11))
+
+
+def generate_progression(key=None):
+    # Root Notes
+    root_notes = []
+    if key is None:
+        key = key_finder()
+
+    scale_notes = scale_finder(key)
+
+    root_notes.append(key)
+
+    # print(f"I: {key}")
     # Getting the 2nd
-    next_chord, next_chord_int = progress(scale_notes, 1, 2)
-    song.append(next_chord)
+
+    next_chord, next_chord_int = progress(scale_notes, chord_position=1, bar_position=2)
+    root_notes.append(next_chord)
 
     while True:
         next_chord, next_chord_int = progress(
-            scale_notes, next_chord_int, len(song) + 1
+            scale_notes,
+            chord_position=next_chord_int,
+            bar_position=(len(root_notes) + 1),
         )
-        song.append(next_chord)
-        if len(song) % 4 == 0 and next_chord_int in [1, 6]:
+        root_notes.append(next_chord)
+        if len(root_notes) % 4 == 0 and next_chord_int in [1, 6]:
             break
 
-    chord_chart = convert_roots_to_chord_chart(song, scale_notes[:-1])
+    chord_chart = convert_roots_to_chord_chart(root_notes, scale_notes[:-1])
     chord_chart_2 = [
         progressions.substitute_major_for_minor(chord[0], 0)[0] for chord in chord_chart
     ]
     chord_progression = progressions.to_chords(chord_chart_2, key)
 
-    chord_progression_nums = [scale_notes.index(note) + 1 for note in song]
+    chord_progression_nums = [scale_notes.index(note) + 1 for note in root_notes]
 
-    song_file_name = f"{key}-{len(song)}"
-    with open(f"songs/{song_file_name}.csv", "w") as csvfile:
+    root_notes_file_name = f"{key}-{len(root_notes)}"
+    with open(f"songs/{root_notes_file_name}.csv", "w") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(chord_progression_nums)
 
     return key, chord_progression
 
 
-def progress(scale_notes, chord_position, bar_position):
+def progress(scale_notes, *, chord_position, bar_position):
     start_of_bar = range(1, 1000, 4)
 
     next_chord_int = random.choice(CLASSICAL_HARMONY[chord_position])
     next_chord = scale_notes[next_chord_int - 1]
 
-    # 1  Chord not on the top of a 4 bar measure
+    # I Chord not on the top of a 4 bar measure
     if next_chord_int == 1 and bar_position not in start_of_bar:
-        progress(scale_notes, chord_position, bar_position)
+        progress(scale_notes, chord_position=chord_position, bar_position=bar_position)
 
-    print(f"{roman_chord_fmt(next_chord_int)}: {chord_fmt(next_chord, next_chord_int)}")
+    # print(f"{roman_chord_fmt(next_chord_int)}: {chord_fmt(next_chord, next_chord_int)}")
     return next_chord, next_chord_int
 
 

@@ -15,7 +15,6 @@ def print_instrument_options():
 
 def find_instrument(args):
     # print_instrument_options()
-
     instrument = MidiInstrument()
 
     if args.random_instrument:

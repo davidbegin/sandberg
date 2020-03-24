@@ -6,8 +6,9 @@ import mingus.core.progressions as progressions
 from sandberg.music import convert_roots_to_chord_chart
 
 
-def load_chord_progression(chord_progression_file_name):
-    key = chord_progression_file_name.split("-")[0]
+def load_chord_progression(chord_progression_file_name, key=None):
+    if not key:
+        key = chord_progression_file_name.split("-")[0]
 
     with open(f"songs/{chord_progression_file_name}.csv") as csvfile:
         reader = csv.reader(csvfile)

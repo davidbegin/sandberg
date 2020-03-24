@@ -10,6 +10,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Sandberg Options")
 
     parser.add_argument(
+        "--key", "-k", dest="key", help="The instrument to use for the song",
+    )
+    parser.add_argument(
         "--instrument",
         dest="instrument",
         default="Ocarina",
@@ -28,13 +31,23 @@ if __name__ == "__main__":
         help="Choose a Random instrument to use for the song",
     )
 
+    # We need to take in Key
+    # We need to take a scale
+    # We need to take BPM
+    # We need to take in a chord-progression from the command line
+
     args = parser.parse_args()
 
+    # python music.py --chord-progression "1,2,4,5" --key C
+
+    # We could also specify it all from the command line
     if args.chord_progression:
         key, chord_progression = load_chord_progression(args.chord_progression)
     else:
-        key, chord_progression = generate_progression()
+        # This needs to take in the key and scale
+        key, chord_progression = generate_progression(key=args.key)
 
     instrument = find_instrument(args)
 
+    print(f"Key: {key}")
     generate_midi(instrument, key, chord_progression)
