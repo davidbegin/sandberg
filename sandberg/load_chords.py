@@ -1,6 +1,9 @@
 import csv
 import mingus.core.scales as scales
+import mingus.core.scales as scales
+import mingus.core.progressions as progressions
 
+from sandberg.music import convert_roots_to_chord_chart
 
 def load_chord_progression(chord_progression_file_name):
     key = chord_progression_file_name.split("-")[0]
@@ -12,6 +15,5 @@ def load_chord_progression(chord_progression_file_name):
         scale_notes = scales.NaturalMinor(key).ascending()
         song = [scale_notes[int(chord_num) - 1] for chord_num in chord_progression_nums]
         chord_chart = convert_roots_to_chord_chart(song, scale_notes[:-1])
-        #
-        chord_progression = progressions.to_chords(chord_chart, key + "m")
+        chord_progression = progressions.to_chords(chord_chart, key)
     return key, chord_progression

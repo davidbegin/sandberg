@@ -7,6 +7,9 @@ import mingus.core.notes as notes
 import mingus.core.scales as scales
 import mingus.core.progressions as progressions
 
+from sandberg.music import convert_roots_to_chord_chart
+
+
 # Fux / Bach Rules
 CLASSICAL_HARMONY = {
     1: [2, 3, 4, 5, 6, 7],
@@ -86,6 +89,3 @@ def chord_fmt(chord, chord_position):
         return f"{chord}m"
     return chord
 
-
-def convert_roots_to_chord_chart(roots, scale_notes):
-    return [roman.toRoman(scale_notes.index(root) + 1) for root in roots]

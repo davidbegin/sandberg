@@ -24,7 +24,7 @@ if __name__ == "__main__":
         "--random-instrument",
         dest="random_instrument",
         action="store_true",
-        default=False,
+        default=True,
         help="Choose a Random instrument to use for the song",
     )
 

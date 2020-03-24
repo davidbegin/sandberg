@@ -6,6 +6,8 @@ import roman
 
 from mingus.containers.instrument import MidiInstrument
 
+def convert_roots_to_chord_chart(roots, scale_notes):
+    return [roman.toRoman(scale_notes.index(root) + 1) for root in roots]
 
 def find_instrument(args):
     # print(MidiInstrument.names)
