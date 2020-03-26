@@ -23,10 +23,9 @@ def find_instrument(args):
     elif args.random_instrument:
         instrument_nr = random.randint(0, len(MidiInstrument.names))
 
+    instrument.name = MidiInstrument.names[instrument_nr]
     instrument.instrument_nr = instrument_nr
 
-    print(
-        f"\n\n\tInstrument: {MidiInstrument.names[instrument_nr]} - {instrument_nr}\n"
-    )
+    print(f"\n\n\tInstrument: {instrument.name} - {instrument_nr}\n")
 
     return instrument

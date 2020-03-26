@@ -41,11 +41,22 @@ if __name__ == "__main__":
         help="A CSV file of a chord progression you want to use",
     )
     parser.add_argument(
+        "--octave", dest="octave", help="The octave to use for the instrument"
+    )
+    parser.add_argument(
         "--random-instrument",
         dest="random_instrument",
         action="store_true",
         default=True,
         help="Choose a Random instrument to use for the song",
+    )
+    parser.add_argument(
+        "--applause",
+        "-a",
+        dest="applause",
+        action="store_true",
+        default=False,
+        help="Whether to celebrate",
     )
 
     # We need to take a scale
@@ -56,7 +67,6 @@ if __name__ == "__main__":
 
     # python music.py --chord-progression "1,2,4,5" --key C
 
-    # We could also specify it all from the command line
     if args.chord_progression:
         key, scale, chord_progression = expand_progression(args.chord_progression)
     elif args.chord_progression_file:
@@ -64,7 +74,6 @@ if __name__ == "__main__":
             args.chord_progression_file, key=args.key, scale=args.scale
         )
     else:
-        # This needs to take in the key and scale
         key, scale, chord_progression = generate_progression(
             key=args.key, scale=args.scale
         )
@@ -78,4 +87,6 @@ if __name__ == "__main__":
     print(f"Chord Chart: {' - '.join(chord_chart)}")
     print("\n")
 
-    generate_midi(instrument, key, chord_progression)
+    generate_midi(
+        instrument, key, chord_progression, octave=args.octave, applause=args.applause
+    )

@@ -19,6 +19,14 @@ Generate songs, passing in various options to change things like:
 - Rhythm Choices
 - Drums
 
+## Meta-Goals
+
+Learn Music Theory From this
+Drain our Ears From this
+
+- Recognizing progressions
+- Recognize interval over a chord
+
 ## Install Requirements
 
 ```bash

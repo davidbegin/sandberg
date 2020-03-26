@@ -94,7 +94,6 @@ def progress(scale_notes, *, chord_position, bar_position):
     if next_chord_int == 1 and bar_position not in start_of_bar:
         progress(scale_notes, chord_position=chord_position, bar_position=bar_position)
 
-    # print(f"{roman_chord_fmt(next_chord_int)}: {chord_fmt(next_chord, next_chord_int)}")
     return next_chord, next_chord_int
 
 
@@ -113,6 +112,7 @@ def chord_fmt(chord, chord_position):
     return chord
 
 
+# TODO: Move this to utils
 def scale_finder(key, scale_name="Major"):
     def func_not_found(key):
         print(f"No Scale: {scale_name} Found!")
