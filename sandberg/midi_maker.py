@@ -13,9 +13,9 @@ from mingus.containers.note_container import NoteContainer
 
 # Add some weights to these, to favor certain rhythm
 # This how we create genres
-# TODO: War Rhytmn
-# CHORD_RHYTHMS = [[4, 4, 4, 4], [4, 3, 4, 5], [8, 8, 4, 4, 4], [8, 8, 8, 8, 8, 8, 8, 8]]
-CHORD_RHYTHMS = [[8, 8, 8, 8, 8, 8, 8, 8]]
+# TODO: War Rhythm
+CHORD_RHYTHMS = [[4, 4, 4, 4], [4, 3, 4, 5], [8, 8, 4, 4, 4], [8, 8, 8, 8, 8, 8, 8, 8]]
+# CHORD_RHYTHMS = [[8, 8, 8, 8, 8, 8, 8, 8]]
 # CHORD_RHYTHMS = [[4,4,4,4]]
 
 INSTRUMENT_OCTAVE = {
@@ -25,7 +25,8 @@ INSTRUMENT_OCTAVE = {
     "Synth Bass 1": 2,
     "Electric Guitar (jazz)": 2,
     "Tuba": 2,
-    "Distortion Guitar": 3,
+    "Distortion Guitar": 1,
+    "Overdriven Guitar": 2,
     "Slap Bass 2": 2,
 }
 
@@ -53,9 +54,15 @@ def generate_midi(instrument, key, chord_progression, octave=None, applause=Fals
     # When is the instrument_nr used in the mingus library
     # to actually choose an instrument in the midi file
 
+    # Make all these configurable
+    # Or make them all random from a range
     track = Track(instrument, channel=1)
+
     drone_track = track_creator("Pad4 (choir)", channel=2)
+
+    # It's one of the few pitched drums
     timpani_track = track_creator("Timpani", channel=3)
+
     applause_track = track_creator("Applause", channel=4)
 
     bar = Bar(key, (4, 4))
@@ -66,6 +73,7 @@ def generate_midi(instrument, key, chord_progression, octave=None, applause=Fals
     for _ in range(how_many_bars):
 
         # Can we get an index
+        # We can with enumerate, but why do we want it
         for chord in chord_progression:
             # The Chord Progression
 
@@ -99,4 +107,4 @@ def generate_midi(instrument, key, chord_progression, octave=None, applause=Fals
         composition.add_track(applause_track)
 
     instrument_name = MidiInstrument.names[instrument.instrument_nr]
-    write_Composition(midi_file_name(instrument_name), composition)
+    write_Composition(midi_file_name(instrument_name), composition, bpm=120)

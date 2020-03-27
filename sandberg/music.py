@@ -4,6 +4,8 @@ import random
 import roman
 from mingus.containers.instrument import MidiInstrument
 
+from sandberg.waitstaff import Waitstaff
+
 
 def convert_roots_to_chord_chart(roots, scale_notes):
     return [roman.toRoman(scale_notes.index(root) + 1) for root in roots]
@@ -13,17 +15,21 @@ def print_instrument_options():
     print(MidiInstrument.names)
 
 
-# TODO: this shouldn't take in args
-def find_instrument(args):
-    # print_instrument_options()
-    instrument = MidiInstrument()
-
-    if args.instrument:
-        instrument_nr = MidiInstrument.names.index(args.instrument)
-    elif args.random_instrument:
+def find_instrument(instrument, instrument_group):
+    if instrument:
+        try:
+            instrument_nr = MidiInstrument.names.index(instrument)
+        except ValueError:
+            instrument_nr = int(instrument)
+    elif instrument_group:
+        # Choose a random from the instrument_group
+        instrument = Waitstaff.choose_from_group(instrument_group)
+        instrument_nr = MidiInstrument.names.index(instrument)
+    else:
         instrument_nr = random.randint(0, len(MidiInstrument.names))
 
-    instrument.name = MidiInstrument.names[instrument_nr]
-    instrument.instrument_nr = instrument_nr
+    midi_instrument = MidiInstrument()
+    midi_instrument.name = MidiInstrument.names[instrument_nr]
+    midi_instrument.instrument_nr = instrument_nr
 
-    return instrument
+    return midi_instrument

@@ -40,12 +40,11 @@ def generate_progression(key=None, scale=None, minor=False):
     root_notes = []
     if key is None:
         key = key_finder()
-
-    scale_notes, scale_name = scale_finder(key, scale_name=scale)
     root_notes.append(key)
 
-    next_chord, next_chord_int = progress(scale_notes, chord_position=1, bar_position=2)
+    scale_notes, scale_name = scale_finder(key, scale_name=scale)
 
+    next_chord, next_chord_int = progress(scale_notes, chord_position=1, bar_position=2)
     root_notes.append(next_chord)
 
     while True:

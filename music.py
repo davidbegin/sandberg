@@ -8,6 +8,7 @@ from sandberg.load_chords import load_chord_progression
 from sandberg.generate_chords import generate_progression, expand_progression
 from sandberg.music import find_instrument
 from sandberg.midi_maker import generate_midi
+from sandberg.waitstaff import Waitstaff
 
 
 def chord_symbol(chord):
@@ -36,12 +37,17 @@ if __name__ == "__main__":
         help="Whether to generate a minor progression",
     )
     parser.add_argument(
+        "--instrument-group",
+        "-g",
+        dest="instrument_group",
+        help="The instrument group to choose a random instrument from. Example: Guitar or Goofs",
+    )
+    parser.add_argument(
         "--instrument",
         "-i",
         dest="instrument",
-        help="The instrument to use for the song",
+        help="The instrument to use for the song. Example: Ocarina or 79",
     )
-
     # "1,4,5"
     # "I,II,IV,V"
     parser.add_argument(
@@ -75,6 +81,14 @@ if __name__ == "__main__":
         default=False,
         help="Whether to celebrate",
     )
+    parser.add_argument(
+        "--choices",
+        "-c",
+        dest="show_choices",
+        action="store_true",
+        default=False,
+        help="Display some instrument choices",
+    )
 
     # We need to take a scale
     # We need to take BPM
@@ -82,9 +96,11 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    if args.show_choices:
+        Waitstaff.show_choices()
+        exit()
     # python music.py --chord-progression "1,2,4,5" --key C
-
-    if args.chord_progression:
+    elif args.chord_progression:
         key, scale, chord_progression = expand_progression(args.chord_progression)
     elif args.repeat_progression:
         key, scale, chord_progression = load_chord_progression(
@@ -100,7 +116,8 @@ if __name__ == "__main__":
         progressions.determine(chord, key, True)[0] for chord in chord_progression
     ]
 
-    instrument = find_instrument(args)
+    instrument = find_instrument(args.instrument, args.instrument_group)
+
     generate_midi(
         instrument, key, chord_progression, octave=args.octave, applause=args.applause
     )
