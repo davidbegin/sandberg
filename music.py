@@ -1,6 +1,7 @@
 import argparse
 
 import mingus.core.chords as chords
+import mingus.core.progressions as progressions
 
 from sandberg.load_chords import load_chord_progression
 from sandberg.generate_chords import generate_progression, expand_progression
@@ -82,14 +83,24 @@ if __name__ == "__main__":
         )
 
     chord_chart = [chord_symbol(chord) for chord in chord_progression]
+    roman_chords = [
+        progressions.determine(chord, key, True)[0] for chord in chord_progression
+    ]
+
+    # colsize = 5
+    # c = ' - '.join(('%*s' % (colsize, i) for i in chord_chart))
+    # c2 = ' - '.join(('%*s' % (colsize, i) for i in roman_chords))
+
+    import os
+
+    os.system("clear")
+    print(f"\n\t\t\033[4mSandberg Hit Writing Bot\033[0m")
+    print(f"\nKey: {key}")
+    print(f"\nScale: {scale}")
+    print(f"\nChords: {' - '.join(chord_chart)}")
+    print(f"\nChords: {' - '.join(roman_chords)}")
 
     instrument = find_instrument(args)
-
-    print(f"Key: {key}")
-    print(f"Scale: {scale}")
-    print(f"Chord Chart: {' - '.join(chord_chart)}")
-    print("\n")
-
     generate_midi(
         instrument, key, chord_progression, octave=args.octave, applause=args.applause
     )
