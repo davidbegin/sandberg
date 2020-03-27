@@ -36,8 +36,11 @@ if __name__ == "__main__":
         help="A str of a chord progression you want to use. Ex: I,IV,V",
     )
     parser.add_argument(
-        "--chord-progression-file",
-        dest="chord_progression_file",
+        "--repeat-last-progression",
+        "-r",
+        dest="repeat_progression",
+        action="store_true",
+        default=False,
         help="A CSV file of a chord progression you want to use",
     )
     parser.add_argument(
@@ -69,9 +72,9 @@ if __name__ == "__main__":
 
     if args.chord_progression:
         key, scale, chord_progression = expand_progression(args.chord_progression)
-    elif args.chord_progression_file:
+    elif args.repeat_progression:
         key, scale, chord_progression = load_chord_progression(
-            args.chord_progression_file, key=args.key, scale=args.scale
+            "song", key=args.key, scale=args.scale
         )
     else:
         key, scale, chord_progression = generate_progression(
