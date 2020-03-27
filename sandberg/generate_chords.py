@@ -7,6 +7,7 @@ import mingus.core.scales as scales
 import mingus.core.progressions as progressions
 
 from sandberg.music import convert_roots_to_chord_chart
+from sandberg.harmony import substitute_major_for_minor
 from sandberg.utils import key_finder
 
 
@@ -35,7 +36,7 @@ def expand_progression(chord_progression, key=None, scale="Major"):
     return key, scale, chord_progression
 
 
-def generate_progression(key=None, scale=None):
+def generate_progression(key=None, scale=None, minor=False):
     root_notes = []
     if key is None:
         key = key_finder()
@@ -59,17 +60,11 @@ def generate_progression(key=None, scale=None):
 
     chord_chart = convert_roots_to_chord_chart(root_notes, scale_notes[:-1])
 
-    chord_chart_2 = progressions.substitute_major_for_minor(chord_chart, 0)
-    # This is minor converted
-    chord_chart_2 = [
-        # progressions.substitute_major_for_minor(root, 0)[0] for root in root_notes
-        progressions.substitute_major_for_minor(chord[0], 0)[0]
-        for chord in chord_chart
-    ]
-    chord_progression = progressions.to_chords(chord_chart_2, key)
+    if minor:
+        chord_chart = substitute_major_for_minor(chord_chart)
+        # Hmmmm Is the chord progression correct here
 
-    # chord_progression = progressions.to_chords(chord_chart, key)
-
+    chord_progression = progressions.to_chords(chord_chart, key)
     chord_progression_nums = [scale_notes.index(note) + 1 for note in root_notes]
     save_song(key, chord_progression_nums)
     return key, scale, chord_progression

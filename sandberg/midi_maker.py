@@ -26,6 +26,7 @@ INSTRUMENT_OCTAVE = {
     "Electric Guitar (jazz)": 2,
     "Tuba": 2,
     "Distortion Guitar": 3,
+    "Slap Bass 2": 2,
 }
 
 

@@ -28,6 +28,14 @@ if __name__ == "__main__":
         help="The scale to use for the song. Ex: Major, NaturalMinor, Locrian, Lydian",
     )
     parser.add_argument(
+        "--minor",
+        "-m",
+        dest="minor",
+        action="store_true",
+        default=False,
+        help="Whether to generate a minor progression",
+    )
+    parser.add_argument(
         "--instrument",
         "-i",
         dest="instrument",
@@ -84,7 +92,7 @@ if __name__ == "__main__":
         )
     else:
         key, scale, chord_progression = generate_progression(
-            key=args.key, scale=args.scale
+            key=args.key, scale=args.scale, minor=args.minor
         )
 
     chord_chart = [chord_symbol(chord) for chord in chord_progression]
@@ -92,14 +100,14 @@ if __name__ == "__main__":
         progressions.determine(chord, key, True)[0] for chord in chord_progression
     ]
 
-    # colsize = 5
-    # c = ' - '.join(('%*s' % (colsize, i) for i in chord_chart))
-    # c2 = ' - '.join(('%*s' % (colsize, i) for i in roman_chords))
-
     instrument = find_instrument(args)
     generate_midi(
         instrument, key, chord_progression, octave=args.octave, applause=args.applause
     )
+
+    if args.minor:
+        key = chord_chart[0]
+        scale = "Minor"
 
     os.system("clear")
     print(f"\n\t\t\033[4mSandberg Hit Writing Bot\033[0m")
