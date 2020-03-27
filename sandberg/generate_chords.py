@@ -59,15 +59,17 @@ def generate_progression(key=None, scale=None):
 
     chord_chart = convert_roots_to_chord_chart(root_notes, scale_notes[:-1])
 
-    # chord_chart_2 = progressions.substitute_major_for_minor(chord_chart, 0)
-    # # This is minor converted
-    # chord_chart_2 = [
-    #     progressions.substitute_major_for_minor(root, 0)[0] for root in root_notes
-    #     # progressions.substitute_major_for_minor(chord[0], 0)[0] for chord in chord_chart
-    # ]
-    # chord_progression = progressions.to_chords(chord_chart_2, key)
+    chord_chart_2 = progressions.substitute_major_for_minor(chord_chart, 0)
+    # This is minor converted
+    chord_chart_2 = [
+        # progressions.substitute_major_for_minor(root, 0)[0] for root in root_notes
+        progressions.substitute_major_for_minor(chord[0], 0)[0]
+        for chord in chord_chart
+    ]
+    chord_progression = progressions.to_chords(chord_chart_2, key)
 
-    chord_progression = progressions.to_chords(chord_chart, key)
+    # chord_progression = progressions.to_chords(chord_chart, key)
+
     chord_progression_nums = [scale_notes.index(note) + 1 for note in root_notes]
     save_song(key, chord_progression_nums)
     return key, scale, chord_progression

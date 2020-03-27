@@ -1,4 +1,5 @@
 import argparse
+import os
 
 import mingus.core.chords as chords
 import mingus.core.progressions as progressions
@@ -27,8 +28,12 @@ if __name__ == "__main__":
         help="The scale to use for the song. Ex: Major, NaturalMinor, Locrian, Lydian",
     )
     parser.add_argument(
-        "--instrument", dest="instrument", help="The instrument to use for the song",
+        "--instrument",
+        "-i",
+        dest="instrument",
+        help="The instrument to use for the song",
     )
+
     # "1,4,5"
     # "I,II,IV,V"
     parser.add_argument(
@@ -45,7 +50,7 @@ if __name__ == "__main__":
         help="A CSV file of a chord progression you want to use",
     )
     parser.add_argument(
-        "--octave", dest="octave", help="The octave to use for the instrument"
+        "--octave", "-o", dest="octave", help="The octave to use for the instrument"
     )
     parser.add_argument(
         "--random-instrument",
@@ -91,16 +96,17 @@ if __name__ == "__main__":
     # c = ' - '.join(('%*s' % (colsize, i) for i in chord_chart))
     # c2 = ' - '.join(('%*s' % (colsize, i) for i in roman_chords))
 
-    import os
+    instrument = find_instrument(args)
+    generate_midi(
+        instrument, key, chord_progression, octave=args.octave, applause=args.applause
+    )
 
     os.system("clear")
     print(f"\n\t\t\033[4mSandberg Hit Writing Bot\033[0m")
+    print(f"\n\t\tInstrument: {instrument.name} - {instrument.instrument_nr}")
     print(f"\nKey: {key}")
     print(f"\nScale: {scale}")
     print(f"\nChords: {' - '.join(chord_chart)}")
     print(f"\nChords: {' - '.join(roman_chords)}")
 
-    instrument = find_instrument(args)
-    generate_midi(
-        instrument, key, chord_progression, octave=args.octave, applause=args.applause
-    )
+    print("\n")

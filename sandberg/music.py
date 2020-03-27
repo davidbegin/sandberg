@@ -26,6 +26,4 @@ def find_instrument(args):
     instrument.name = MidiInstrument.names[instrument_nr]
     instrument.instrument_nr = instrument_nr
 
-    print(f"\n\n\tInstrument: {instrument.name} - {instrument_nr}\n")
-
     return instrument
