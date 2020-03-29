@@ -1,5 +1,6 @@
 import argparse
 import datetime
+from faker import Faker
 from pathlib import Path
 import random
 import time
@@ -24,6 +25,7 @@ import wikipedia
 # - Blue Note record generator
 # - Other Genre Album generator
 
+fake = Faker()
 
 
 # TODO: pass these in
@@ -41,13 +43,6 @@ def download_all_images(search):
         print(image_name)
         urllib.request.urlretrieve(image_url, f"images/{image_name}")
 
-
-def rainbow_affect(img):
-    frequency = 3
-    phase_shift = -90
-    amplitude = 0.2
-    bias = 0.7
-    img.function('sinusoid', [frequency, phase_shift, amplitude, bias])
 
 # Affects and Effects this
 def add_band_name(img):
@@ -67,45 +62,43 @@ def add_band_name(img):
 
 
 def rainbow_img(img):
-    rainbow_affect(img)
+    frequency = random.randint(1,5)
+    phase_shift = -90
+    amplitude = 0.2
+    bias = 0.7
+    print(f"{frequency=}")
+    print(f"{phase_shift=}")
+    print(f"{amplitude=}")
+    print(f"{bias=}")
 
-def sketch_img(img):
-    img.kuwahara(radius=2, sigma=1.5)
+    img.function('sinusoid', [frequency, phase_shift, amplitude, bias])
 
-
-def edit_image(image_path, edit_func):
-    with Image(filename=image_path) as img:
-        print(f"{image_path} Width: {img.width} Height: {img.height}")
-
-        add_band_name(img)
-
-        edit_func(img)
-
-        image_folder, search, filename = image_path.parts
-        save_filename = Path(__file__).parent.joinpath(
-            f"images/{search}/album_art/tint-{filename}-{time.time()}"
-        )
-        img.save(filename=save_filename)
 
 
 def tint_img(img):
+    color = fake.safe_color_name()
+    print(f"Tint: {color=}")
     img.tint(color="blue", alpha="rgb(40%, 60%, 80%)")
 
 
-def rainbow_img(img):
-    rainbow_affect(img)
-
-
 def sketch_img(img):
-    img.kuwahara(radius=2, sigma=1.5)
+    radius = random.randint(1,3)
+    print(f"Sketch: {radius=}")
+    img.kuwahara(radius=radius, sigma=1.5)
 
 
 def rotate_blur_img(img):
-    img.rotational_blur(angle=4)
+    angle = random.randint(2,6)
+    print(f"Rotate Blur: {angle=}")
+    img.rotational_blur(angle=angle)
 
 
 def pixel_spread_img(img):
-    img.spread(radius=8.0)
+    radius = random.randint(6,10)
+    print(f"Pixel Spread: {radius=}")
+
+    # Does this need to be a float??
+    img.spread(radius=radius)
 
 
 def black_and_white_img(img):
@@ -119,7 +112,9 @@ def sketch_img(img):
 
 
 def border_img(img):
-    img.vignette(sigma=3, x=10, y=10)
+    sigma = random.randint(1,5)
+    print(f"Border Image: {sigma=}")
+    img.vignette(sigma=sigma, x=10, y=10)
 
 
 EFFECTS = [rainbow_img, sketch_img, tint_img, rotate_blur_img, rotate_blur_img,
@@ -153,10 +148,22 @@ def produce_samples(search):
 # # a bunch of different effects on the same image
 # with Image(filename=image_filename) as img:
 #     print(img.width, img.height)
-
-
 #     add_band_name(img)
     # Should we start saving the affects in the title
+
+def edit_image(image_path, edit_func):
+    with Image(filename=image_path) as img:
+        print(f"{image_path} Width: {img.width} Height: {img.height}")
+
+        add_band_name(img)
+        edit_func(img)
+
+        image_folder, search, filename = image_path.parts
+        save_filename = Path(__file__).parent.joinpath(
+        f"images/{search}/album_art/tint-{filename}-{time.time()}"
+        )
+        img.save(filename=save_filename)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Sandberg Options")

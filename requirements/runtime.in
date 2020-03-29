@@ -1,4 +1,5 @@
 -e ../../opensource/python-mingus/mingus
+faker
 roman
 requests
 wikipedia
