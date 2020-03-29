@@ -15,6 +15,10 @@ def print_instrument_options():
     print(MidiInstrument.names)
 
 
+def find_pad():
+    pass
+
+
 def find_instrument(instrument, instrument_group):
     if instrument:
         try:

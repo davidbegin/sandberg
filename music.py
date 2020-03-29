@@ -1,5 +1,7 @@
 import argparse
+import requests
 import os
+import re
 
 import mingus.core.chords as chords
 import mingus.core.progressions as progressions
@@ -96,6 +98,17 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    # curl "https://www.guitarplayerbox.com/song/list/containing/chords/?chSel=A&chSel=Bm&chSel=Fsharpm&maxCapo=5" | grep songNameLabel | sed 's/.*[0-9]\">//g' | sed 's/<.*//g'^C
+    url = "https://www.guitarplayerbox.com/song/list/containing/chords/?chSel=A&chSel=Bm&chSel=Fsharpm"
+
+    # x = requests.get(url)
+    # with open("copywrite_claims.html", "w+") as f:
+    #     f.write(x.text)
+    # song_search = re.compile("songNameLabel(.*)")
+    # # We need to search in here
+    # # breakpoint()
+    # # songNameLabel
+
     if args.show_choices:
         Waitstaff.show_choices()
         exit()
@@ -116,10 +129,16 @@ if __name__ == "__main__":
         progressions.determine(chord, key, True)[0] for chord in chord_progression
     ]
 
+    pad = Waitstaff.choose_from_group("Pad")
     instrument = find_instrument(args.instrument, args.instrument_group)
 
     generate_midi(
-        instrument, key, chord_progression, octave=args.octave, applause=args.applause
+        instrument,
+        key,
+        chord_progression,
+        pad,
+        octave=args.octave,
+        applause=args.applause,
     )
 
     if args.minor:
@@ -129,6 +148,7 @@ if __name__ == "__main__":
     os.system("clear")
     print(f"\n\t\t\033[4mSandberg Hit Writing Bot\033[0m")
     print(f"\n\t\tInstrument: {instrument.name} - {instrument.instrument_nr}")
+    print(f"\n\t\tPad: {pad}")
     print(f"\nKey: {key}")
     print(f"\nScale: {scale}")
     print(f"\nChords: {' - '.join(chord_chart)}")

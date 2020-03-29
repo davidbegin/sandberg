@@ -1,2 +1,5 @@
 -e ../../opensource/python-mingus/mingus
 roman
+requests
+wikipedia
+wand

@@ -54,6 +54,7 @@ def generate_progression(key=None, scale=None, minor=False):
             bar_position=(len(root_notes) + 1),
         )
         root_notes.append(next_chord)
+        # if len(root_notes) == 4:
         if len(root_notes) % 4 == 0 and next_chord_int in [1, 6]:
             break
 

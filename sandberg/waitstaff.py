@@ -6,14 +6,28 @@ from mingus.containers.instrument import MidiInstrument
 class Waitstaff:
     names = MidiInstrument.names
     keyboards = names[0:24]
-    guitars   = names[24:32]
+    guitars = names[24:32]
     instrument_groups = {
-        "Keyboard" : (0, 24),
+        "Keyboard": (0, 24),
         "Guitar": (24, 32),
+        "Pad": (88, 95),
+        "Wind": (74, 79),
     }
-    
+
     @staticmethod
     def choose_from_group(group):
+        # x = Waitstaff.names.index("Recorder")
+        # y = Waitstaff.names.index("Ocarina")
+        # breakpoint()
+        #     "Pad1 (new age)",
+        #     "Pad2 (warm)",
+        #     "Pad3 (polysynth)",
+        #     "Pad4 (choir)",
+        #     "Pad5 (bowed)",
+        #     "Pad6 (metallic)",
+        #     "Pad7 (halo)",
+        #     "Pad8 (sweep)",
+
         start, end = Waitstaff.instrument_groups[group]
         return random.sample(Waitstaff.names[start:end], 1)[0]
 
@@ -108,7 +122,6 @@ class Waitstaff:
         #     "Piccolo",
         #     "Flute",
 
-        
         #     # Wind Things
         #     "Recorder",
         #     "Pan Flute",
@@ -116,7 +129,6 @@ class Waitstaff:
         #     "Shakuhachi",
         #     "Whistle",
         #     "Ocarina",
-
 
         #     # Leads
         #     "Lead1 (square)",
@@ -127,7 +139,6 @@ class Waitstaff:
         #     "Lead6 (voice)",
         #     "Lead7 (fifths)",
         #     "Lead8 (bass + lead)",
-
 
         #     # Pads
         #     "Pad1 (new age)",
@@ -149,7 +160,6 @@ class Waitstaff:
         #     "FX 7 (echoes)",
         #     "FX 8 (sci-fi)",
 
-
         #     # International
         #     "Sitar",
         #     "Banjo",
@@ -161,7 +171,6 @@ class Waitstaff:
         #     "Shanai",
         #     "Tinkle Bell",
 
-
         #     # Drums
         #     "Agogo",
         #     "Steel Drums",
@@ -169,7 +178,6 @@ class Waitstaff:
         #     "Taiko Drum",
         #     "Melodic Tom",
         #     "Synth Drum",
-
 
         #     # Goofs
         #     "Reverse Cymbal",

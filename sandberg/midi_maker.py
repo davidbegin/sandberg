@@ -11,6 +11,8 @@ from mingus.midi.midi_file_out import MidiFile as MidiFileOut
 from mingus.midi.midi_file_out import write_Composition
 from mingus.containers.note_container import NoteContainer
 
+from sandberg.waitstaff import Waitstaff
+
 # Add some weights to these, to favor certain rhythm
 # This how we create genres
 # TODO: War Rhythm
@@ -46,19 +48,17 @@ def midi_file_name(instrument_name):
     return Path(__file__).parent.parent.joinpath(f"midi_files/{nice_inst}.mid")
 
 
-def generate_midi(instrument, key, chord_progression, octave=None, applause=False):
+def generate_midi(instrument, key, chord_progression, pad, octave=None, applause=False):
     composition = Composition()
 
     how_many_bars = 16
-
-    # When is the instrument_nr used in the mingus library
-    # to actually choose an instrument in the midi file
 
     # Make all these configurable
     # Or make them all random from a range
     track = Track(instrument, channel=1)
 
-    drone_track = track_creator("Pad4 (choir)", channel=2)
+    drone_track = track_creator(pad, channel=2)
+    # drone_track = track_creator("Pad4 (choir)", channel=2)
 
     # It's one of the few pitched drums
     timpani_track = track_creator("Timpani", channel=3)

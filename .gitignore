@@ -3,3 +3,4 @@ midi_files/*
 songs/*
 __pycache__/*
 */__pycache__/*
+images/*
