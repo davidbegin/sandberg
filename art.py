@@ -66,35 +66,65 @@ def add_band_name(img):
         draw(img)
 
 
-def rainbow_img(image_path):
-    with Image(filename=image_path) as img:
-        breakpoint()
-        print(img.width, img.height)
-        rainbow_affect(img)
-        add_band_name(img)
-        img.save(filename=f"{image_path}-{time.time()}.png")
+def rainbow_img(img):
+    rainbow_affect(img)
 
-def sketch_img(image_path):
-    with Image(filename=image_path) as img:
-        print(img.width, img.height)
-        img.kuwahara(radius=2, sigma=1.5)
-        add_band_name(img)
-        img.save(filename=f"{image_path}-{time.time()}.png")
+def sketch_img(img):
+    img.kuwahara(radius=2, sigma=1.5)
 
-def tint_img(image_path):
+
+def edit_image(image_path, edit_func):
     with Image(filename=image_path) as img:
         print(f"{image_path} Width: {img.width} Height: {img.height}")
+
         add_band_name(img)
-        #  Random Colors
-        # Random Percents
-        img.tint(color="blue", alpha="rgb(40%, 60%, 80%)")
+
+        edit_func(img)
+
         image_folder, search, filename = image_path.parts
-        save_filename = Path(__file__).parent.joinpath(f"images/{search}/album_art/tint-{filename}-{time.time()}")
+        save_filename = Path(__file__).parent.joinpath(
+            f"images/{search}/album_art/tint-{filename}-{time.time()}"
+        )
         img.save(filename=save_filename)
 
 
-EFFECTS = [tint_img]
-# EFFECTS = [rainbow_img, sketch_img, tint_img]
+def tint_img(img):
+    img.tint(color="blue", alpha="rgb(40%, 60%, 80%)")
+
+
+def rainbow_img(img):
+    rainbow_affect(img)
+
+
+def sketch_img(img):
+    img.kuwahara(radius=2, sigma=1.5)
+
+
+def rotate_blur_img(img):
+    img.rotational_blur(angle=4)
+
+
+def pixel_spread_img(img):
+    img.spread(radius=8.0)
+
+
+def black_and_white_img(img):
+    img.transform_colorspace('gray')
+    img.edge(radius=1)
+
+
+def sketch_img(img):
+    img.transform_colorspace("gray")
+    img.sketch(0.5, 0.0, 98.0)
+
+
+def border_img(img):
+    img.vignette(sigma=3, x=10, y=10)
+
+
+EFFECTS = [rainbow_img, sketch_img, tint_img, rotate_blur_img, rotate_blur_img,
+        pixel_spread_img, black_and_white_img, sketch_img, border_img]
+
 
 def produce_samples(search):
     Path(__file__).parent.joinpath(f"images/{search}/album_art").mkdir(exist_ok=True)
@@ -104,7 +134,7 @@ def produce_samples(search):
     for image in image_folder.glob("*.jpg"):
         print(image)
         for effect in EFFECTS:
-            effect(image)
+            edit_image(image, effect)
             # effect(image_folder.joinpath(image))
 
         
@@ -124,22 +154,6 @@ def produce_samples(search):
 # with Image(filename=image_filename) as img:
 #     print(img.width, img.height)
 
-#     # Spread Out Blurred Pixels
-#     img.spread(radius=8.0)
-
-#     # We have to decide how much to angle!
-#     # img.rotational_blur(angle=4)
-
-#     # All black and White
-#     # img.transform_colorspace('gray')
-#     # img.edge(radius=1)
-
-#     # img.transform_colorspace("gray")
-#     # img.sketch(0.5, 0.0, 98.0)
-
-
-#     # border around then image
-#     # img.vignette(sigma=3, x=10, y=10)
 
 #     add_band_name(img)
     # Should we start saving the affects in the title
