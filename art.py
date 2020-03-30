@@ -1,8 +1,10 @@
 import argparse
 import datetime
 from faker import Faker
+import functools
 from pathlib import Path
 import random
+from random import randint
 import time
 import urllib.request
 
@@ -27,12 +29,25 @@ import wikipedia
 
 fake = Faker()
 
+DICT_WORDS = Path("/usr/share/dict/cracklib-small").read_text().split()
 
-# TODO: pass these in
-# band_name = "Vulnerable\nVMs"
-# 'Von Neumann Bottleneck')
-# band_name = "def no await"
-band_name = "2 Pallas"
+# The singlewords
+# The singleword project
+# 1 to 4 words
+def band_name_generator():
+    band_name_length = randint(1, 2)
+
+    if band_name_length == 2:
+        # The most pythonic 50% this or that
+        return " ".join(random.sample(DICT_WORDS, band_name_length))
+    else:
+
+        if randint(0,1) == 0:
+            return " ".join(random.sample(DICT_WORDS, band_name_length))
+        else:
+            return "The {random.sample(DICT_WORDS, 1)[0].upper()}'s"
+
+
 
 def download_all_images(search):
     print(f"Searching for: {search}")
@@ -45,17 +60,31 @@ def download_all_images(search):
 
 
 # Affects and Effects this
-def add_band_name(img):
+def add_band_name(band_name, img):
     with Drawing() as draw:
         # The font size needs to be proportional
-        draw.font_size = int(img.width / 10)
+        draw.font_size = int(img.width / random.randint(9, 20))
 
         # We have to know when we are using light verus dark affects
-        draw.fill_color = Color('white')
+        color = fake.safe_color_name()
+
+        draw.fill_color = Color(color)
+
+        # draw.fill_color = Color('white')
         # draw.fill_color = Color('rgba(3, 3, 3, 0.6)')
-        draw.font = 'Inconsolata-Bold'
-        draw.text(int(img.width / random.randint(2,4)), int(img.height /
-            random.randint(2,4)), band_name)
+        
+
+        fonts = [
+            'Inconsolata-Bold',
+            "Cantarell-Regular"
+        ]
+
+        font = random.sample(fonts, 1)[0]
+        draw.font = font
+
+
+        draw.text(int(img.width / random.randint(4,8)), int(img.height /
+            random.randint(3,6)), band_name)
 
         # draw.text(100, 100, band_name)
         draw(img)
@@ -78,7 +107,7 @@ def rainbow_img(img):
 def tint_img(img):
     color = fake.safe_color_name()
     print(f"Tint: {color=}")
-    img.tint(color="blue", alpha="rgb(40%, 60%, 80%)")
+    img.tint(color=color, alpha="rgb(40%, 60%, 80%)")
 
 
 def sketch_img(img):
@@ -123,44 +152,43 @@ EFFECTS = [rainbow_img, sketch_img, tint_img, rotate_blur_img, rotate_blur_img,
 
 def produce_samples(search):
     Path(__file__).parent.joinpath(f"images/{search}/album_art").mkdir(exist_ok=True)
-
     image_folder = Path(__file__).parent.joinpath(f"images/{search}")
-
     for image in image_folder.glob("*.jpg"):
         print(image)
         for effect in EFFECTS:
-            edit_image(image, effect)
-            # effect(image_folder.joinpath(image))
+            band_name = band_name_generator()
+            edit_image(image, effect, band_name)
 
-        
-    # image_name = "{search}/Luftballong.jpg"
-    # image_path = Path(__file__).parent.joinpath(f"images/{image_name}")
-    # This should remove images of a certain size and filetyppe
+    for image in image_folder.glob("*.jpg"):
+        print(image)
+        super_effects = random.sample(EFFECTS, random.randint(2, len(EFFECTS)))
+        for effect in super_effects:
+            effect(image)
 
-    # I can use imagemagick to read width
+        image_folder, search, filename = image.parts
+        save_filename = Path(__file__).parent.joinpath(
+            f"images/{search}/album_art/tint-{filename}-{time.time()}"
+        )
+        img.save(filename=save_filename)
 
 
 
 
-
-
-# # What's the most efficent way to call
-# # a bunch of different effects on the same image
-# with Image(filename=image_filename) as img:
-#     print(img.width, img.height)
-#     add_band_name(img)
-    # Should we start saving the affects in the title
-
-def edit_image(image_path, edit_func):
+def edit_image(image_path, edit_func, band_name):
     with Image(filename=image_path) as img:
         print(f"{image_path} Width: {img.width} Height: {img.height}")
+        
+        band_name_func = functools.partial(add_band_name, band_name)
 
-        add_band_name(img)
-        edit_func(img)
+        image_funcs = [edit_func, band_name_func]
+        # random.shuffle(image_funcs)
+
+        for image_func in image_funcs:
+            image_func(img)
 
         image_folder, search, filename = image_path.parts
         save_filename = Path(__file__).parent.joinpath(
-        f"images/{search}/album_art/tint-{filename}-{time.time()}"
+            f"images/{search}/album_art/tint-{filename}-{time.time()}"
         )
         img.save(filename=save_filename)
 
@@ -180,8 +208,4 @@ if __name__ == "__main__":
     if args.download:
         download_all_images(args.search)
     else:
-        # poseidonbl: search term djengis khan
-        # image_name = "Balloons/Jacques_Charles_Luftschiff.jpg"
-        # image_name = "Balloons/Parada_Gay_em_Sampa.jpg"
-
         produce_samples(args.search)
