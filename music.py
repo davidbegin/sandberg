@@ -17,12 +17,43 @@ def chord_symbol(chord):
     return chords.determine(chord, shorthand=True)[0]
 
 
+# What are the multiple ways to break copywrite
+#
+# How much content needs to be there for copyright
+# more than 7 notes in Rhythm
+# frenck: Hmm... just because something is copyrighted, it doesn't mean you
+# cannot use it right?
+# Fair-use
+#
+# transformative things to the content
+# how much do you have to change
+# frenck: @beginbot No I cannot... since I'm licensed
+#
+# License to Stream
+# hazeanderson: BMI, ASCAP or Seacac
+# hazeanderson: SEASAC :D
+# *spfar:* beginbot is back!
+# artmattdank: perchance to Stream
+def lawyer_up():
+    # Find Chord progression
+    # curl "https://www.guitarplayerbox.com/song/list/containing/chords/?chSel=A&chSel=Bm&chSel=Fsharpm&maxCapo=5" | grep songNameLabel | sed 's/.*[0-9]\">//g' | sed 's/<.*//g'^C
+    url = "https://www.guitarplayerbox.com/song/list/containing/chords/?chSel=A&chSel=Bm&chSel=Fsharpm"
+    # x = requests.get(url)
+    # with open("copywrite_claims.html", "w+") as f:
+    #     f.write(x.text)
+    # song_search = re.compile("songNameLabel(.*)")
+    # # We need to search in here
+    # # breakpoint()
+    # # songNameLabel
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Sandberg Options")
 
     parser.add_argument(
         "--key", "-k", dest="key", help="The Root Note to use for the song"
     )
+    parser.add_argument("--bpm", "-b", dest="bpm", help="Beats per minute", default=120)
     parser.add_argument(
         "--scale",
         "-s",
@@ -98,17 +129,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    # curl "https://www.guitarplayerbox.com/song/list/containing/chords/?chSel=A&chSel=Bm&chSel=Fsharpm&maxCapo=5" | grep songNameLabel | sed 's/.*[0-9]\">//g' | sed 's/<.*//g'^C
-    url = "https://www.guitarplayerbox.com/song/list/containing/chords/?chSel=A&chSel=Bm&chSel=Fsharpm"
-
-    # x = requests.get(url)
-    # with open("copywrite_claims.html", "w+") as f:
-    #     f.write(x.text)
-    # song_search = re.compile("songNameLabel(.*)")
-    # # We need to search in here
-    # # breakpoint()
-    # # songNameLabel
-
     if args.show_choices:
         Waitstaff.show_choices()
         exit()
@@ -133,12 +153,13 @@ if __name__ == "__main__":
     instrument = find_instrument(args.instrument, args.instrument_group)
 
     generate_midi(
-        instrument,
-        key,
-        chord_progression,
-        pad,
-        octave=args.octave,
         applause=args.applause,
+        bpm=int(args.bpm),
+        chord_progression=chord_progression,
+        instrument=instrument,
+        key=key,
+        octave=args.octave,
+        pad=pad,
     )
 
     if args.minor:

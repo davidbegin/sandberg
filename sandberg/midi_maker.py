@@ -48,7 +48,10 @@ def midi_file_name(instrument_name):
     return Path(__file__).parent.parent.joinpath(f"midi_files/{nice_inst}.mid")
 
 
-def generate_midi(instrument, key, chord_progression, pad, octave=None, applause=False):
+# A#, D#, G#
+def generate_midi(
+    *, instrument, chord_progression, pad, key="C", bpm=120, octave=None, applause=False
+):
     composition = Composition()
 
     how_many_bars = 16
@@ -107,4 +110,4 @@ def generate_midi(instrument, key, chord_progression, pad, octave=None, applause
         composition.add_track(applause_track)
 
     instrument_name = MidiInstrument.names[instrument.instrument_nr]
-    write_Composition(midi_file_name(instrument_name), composition, bpm=120)
+    write_Composition(midi_file_name(instrument_name), composition, bpm=bpm)
