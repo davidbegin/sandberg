@@ -45,7 +45,7 @@ def band_name_generator():
         if randint(0,1) == 0:
             return " ".join(random.sample(DICT_WORDS, band_name_length))
         else:
-            return "The {random.sample(DICT_WORDS, 1)[0].upper()}'s"
+            return f"The {random.sample(DICT_WORDS, 1)[0].upper()}'s"
 
 
 

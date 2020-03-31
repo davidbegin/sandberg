@@ -152,21 +152,7 @@ if __name__ == "__main__":
     pad = Waitstaff.choose_from_group("Pad")
     instrument = find_instrument(args.instrument, args.instrument_group)
 
-    generate_midi(
-        applause=args.applause,
-        bpm=int(args.bpm),
-        chord_progression=chord_progression,
-        instrument=instrument,
-        key=key,
-        octave=args.octave,
-        pad=pad,
-    )
-
-    if args.minor:
-        key = chord_chart[0]
-        scale = "Minor"
-
-    os.system("clear")
+    # os.system("clear")
     print(f"\n\t\t\033[4mSandberg Hit Writing Bot\033[0m")
     print(f"\n\t\tInstrument: {instrument.name} - {instrument.instrument_nr}")
     print(f"\n\t\tPad: {pad}")
@@ -174,5 +160,23 @@ if __name__ == "__main__":
     print(f"\nScale: {scale}")
     print(f"\nChords: {' - '.join(chord_chart)}")
     print(f"\nChords: {' - '.join(roman_chords)}")
-
     print("\n")
+
+    if args.octave:
+        octave = int(args.octave)
+    else:
+        octave = None
+
+    generate_midi(
+        applause=args.applause,
+        bpm=int(args.bpm),
+        chord_progression=chord_progression,
+        instrument=instrument,
+        key=key,
+        octave=octave,
+        pad=pad,
+    )
+
+    if args.minor:
+        key = chord_chart[0]
+        scale = "Minor"

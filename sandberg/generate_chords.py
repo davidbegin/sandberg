@@ -12,6 +12,15 @@ from sandberg.utils import key_finder
 
 
 # Fux / Bach Rules
+# CLASSICAL_HARMONY = {
+#     1: [2, 3, 4, 5, 6, 7],
+#     2: [5, 7, 1],
+#     3: [6, 4],
+#     4: [2, 5, 7, 1],
+#     5: [1, 6],
+#     6: [4, 2],
+#     7: [1, 6],
+# }
 CLASSICAL_HARMONY = {
     1: [2, 3, 4, 5, 6, 7],
     2: [5, 7, 1],
@@ -54,8 +63,7 @@ def generate_progression(key=None, scale=None, minor=False):
             bar_position=(len(root_notes) + 1),
         )
         root_notes.append(next_chord)
-        # if len(root_notes) == 4:
-        if len(root_notes) % 4 == 0 and next_chord_int in [1, 6]:
+        if len(root_notes) % 4 == 0 and next_chord_int in [2, 4, 5, 7]:
             break
 
     chord_chart = convert_roots_to_chord_chart(root_notes, scale_notes[:-1])
@@ -84,15 +92,15 @@ def save_song(key, chord_progression_nums):
 
 
 def progress(scale_notes, *, chord_position, bar_position):
-    start_of_bar = range(1, 1000, 4)
-
+    print("Bar Position " + str(bar_position))
     next_chord_int = random.choice(CLASSICAL_HARMONY[chord_position])
     next_chord = scale_notes[next_chord_int - 1]
 
     # I Chord not on the top of a 4 bar measure
-    if next_chord_int == 1 and bar_position not in start_of_bar:
-        progress(scale_notes, chord_position=chord_position, bar_position=bar_position)
+    # if next_chord_int in [2,4,5,7] and bar_position % 4 == 0:
+    #     progress(scale_notes, chord_position=chord_position, bar_position=bar_position)
 
+    # When should we end early
     return next_chord, next_chord_int
 
 
