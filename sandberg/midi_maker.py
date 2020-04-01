@@ -285,8 +285,8 @@ def generate_applause():
     return applause_track
 
 
-def add_4_4(track, note, octave=2, rhythm=[4, 4, 4, 4]):
-    bar = Bar(note, (4, 4))
+def add_4_4(key, track, note, octave=2, rhythm=[4, 4, 4, 4]):
+    bar = Bar(key, (4, 4))
     nc = NoteContainer(note, octave=octave)
     for length in rhythm:
         bar.place_notes(nc, length)
@@ -387,8 +387,8 @@ def generate_midi(
                 bar.place_notes(nc, length)
             chord_track.add_bar(bar)
 
-            add_4_4(drone_track, chord[0], rhythm=[1])
-            add_4_4(timpani_track, chord[0])
+            add_4_4(key, drone_track, chord[0], rhythm=[1])
+            add_4_4(key, timpani_track, chord[0])
 
     composition.add_track(timpani_track)
     composition.add_track(drone_track)

@@ -5,11 +5,10 @@ from mingus.containers.note import Note
 
 
 def key_finder():
-    key = notes.int_to_note(random.randint(0, 11))
+    key_index = random.randint(0, 11)
+    key = notes.int_to_note(key_index)
+
     if key in ["A#", "D#", "G#", "B#"]:
-        return "C"
-        note = Note(key)
-        note.remove_redundant_accidentals()
-        return note
+        return notes.int_to_note(key_index, "b")
     else:
         return key
