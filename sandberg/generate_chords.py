@@ -10,7 +10,6 @@ from sandberg.music import convert_roots_to_chord_chart
 from sandberg.harmony import substitute_major_for_minor
 from sandberg.utils import key_finder
 
-
 # Fux / Bach Rules
 # CLASSICAL_HARMONY = {
 #     1: [2, 3, 4, 5, 6, 7],

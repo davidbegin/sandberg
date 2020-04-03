@@ -13,25 +13,9 @@ from mingus.midi.midi_file_out import MidiFile as MidiFileOut
 from mingus.midi.midi_file_out import write_Composition
 from mingus.containers.note_container import NoteContainer
 from mingus.core.scales import Major, NaturalMinor
+import mingus.core.value as value
 
 from sandberg.waitstaff import Waitstaff
-
-# Add some weights to these, to favor certain rhythm
-# This how we create genres
-# TODO: War Rhythm
-# CHORD_RHYTHMS = [
-#     [4, 4, 4, 4],
-#     [8, 8, 8, 8, 8, 8, 8, 8]
-# ]
-# ANGULAR_RHYTHMS = [
-#     [8, 8, 4, 4, 4],
-#     [8, 8, 8,8, 4, 4],
-#     [8, 8, 8,8, 8,8, 4],
-# ]
-# CHORD_RHYTHMS = [[4, 4, 4, 4], [4, 3, 4, 5], [8, 8, 4, 4, 4], [8, 8, 8, 8, 8, 8, 8, 8]]
-# CHORD_RHYTHMS = [[8, 8, 8, 8, 8, 8, 8, 8]]
-# CHORD_RHYTHMS = [[4,4,4,4]]
-
 
 CHORD_RHYTHMS = [
     {"rhythm": [4, 4, 4, 4], "weight": 2},
@@ -42,6 +26,7 @@ CHORD_RHYTHMS = [
     {"rhythm": [8, 8, 8, 16, 16, 16, 16, 8, 8, 8], "weight": 3},
     {"rhythm": [8, 16, 16, 8, 16, 16, 16, 16, 8, 16, 16, 8], "weight": 3},
     {"rhythm": [2, 4, 4], "weight": 1},
+    {"rhythm": [value.dots(4), 8, value.dots(4), 8], "weight": 4},
 ]
 
 INSTRUMENT_OCTAVE = {
@@ -352,7 +337,15 @@ def choose_notes(key, chord, instrument, previous_notes=None):
 
 # A#, D#, G#
 def generate_midi(
-    *, instrument, chord_progression, pad, key, bpm=120, octave=None, applause=False
+    *,
+    instrument,
+    chord_progression,
+    pad,
+    key,
+    bpm=120,
+    octave=None,
+    applause=False,
+    save_filename=None,
 ):
     composition = Composition()
 
@@ -400,4 +393,9 @@ def generate_midi(
         composition.add_track(applause_track)
 
     instrument_name = MidiInstrument.names[instrument.instrument_nr]
-    write_Composition(midi_file_name(instrument_name), composition, bpm=bpm)
+
+    if save_filename is None:
+        save_filename = midi_file_name(instrument_name)
+
+    print(f"Saving MIDI to: {save_filename}")
+    write_Composition(save_filename, composition, bpm=bpm)

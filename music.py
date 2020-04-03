@@ -122,6 +122,9 @@ if __name__ == "__main__":
         default=False,
         help="Display some instrument choices",
     )
+    parser.add_argument(
+        "--save-filename", dest="save_filename", help="Where to store the MIDI file",
+    )
 
     # We need to take a scale
     # We need to take BPM
@@ -175,6 +178,7 @@ if __name__ == "__main__":
         key=key,
         octave=octave,
         pad=pad,
+        save_filename=args.save_filename,
     )
 
     if args.minor:
