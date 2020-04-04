@@ -5,23 +5,44 @@
 # - Download images for the search
 # - Generate separate album art images
 # - combine the albums art images into a video plus music
+SOUNDFONT="/usr/share/soundfonts/FluidR3_GM.sf2"
 
 SEARCH=$1
-echo $SEARCH
-echo "hits/$SEARCH"
 
-# We need way of specifying the midi location
-# python music.py --save hits/new_hit.mid -m -b 120
+mkdir -p hits
 
-# echo "Generating WAV"
+echo "Generating Midi"
+python music.py --save "hits/${SEARCH}.mid" -m -b 120
 
-# fluidsynth --quiet -a pulseaudio -g 5 -m alsa_seq -l \
-#   -i /usr/share/soundfonts/FluidR3_GM.sf2 -F hits/new_hit.wav hits/new_hit.mid > /dev/null 2> /dev/null
+echo "Converting MIDI to WAV"
+fluidsynth                 \
+  -a pulseaudio            \
+  -g 5                     \
+  -m alsa_seq              \
+  -l                       \
+  -i $SOUNDFONT            \
+  -F "hits/${SEARCH}.wav"    \
+  "hits/${SEARCH}.mid"       \
+  > /dev/null 2> /dev/null \
 
-# $1
-# python art.py -s $SEARCH -d | lolcat
-# python art.py -s $SEARCH    | lolcat
+echo "Downloading Album Art Base Images"
+python art.py -s $SEARCH -d | lolcat
 
-ffmpeg -r 1 -f image2 -s 1920x1080 -pattern_type glob -i "images/$SEARCH/album_art/*.*.jpg" -vcodec libx264 "hits/$SEARCH.mp4"
+echo "Generating Art From Base Images"
+python art.py -s $SEARCH    | lolcat
 
-ffmpeg -i hits/new_hit.wav -i "hits/$SEARCH.mp4" "hits/${SEARCH}_music_video.mp4"
+echo "Generating Art From Base Images"
+ffmpeg                                  \
+  -r 1                                  \
+  -f image2                             \
+  -s 1920x1080                          \
+  -pattern_type glob                    \
+  -i "images/${SEARCH}/album_art/*.*.jpg" \
+  -vcodec libx264                       \
+  "hits/${SEARCH}.mp4" | pv -s $(ls -1 "images/${SEARCH}/album_art")
+
+echo "Combing Images and Sound into Music Video"
+ffmpeg                             \
+  -i "hits/${SEARCH}.wav"            \
+  -i "hits/${SEARCH}.mp4"            \
+  "hits/${SEARCH}_music_video.mp4"
