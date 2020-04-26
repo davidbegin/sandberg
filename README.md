@@ -19,6 +19,8 @@ Generate songs, passing in various options to change things like:
 - Rhythm Choices
 - Drums
 
+Overlay images for the music video with FFMPEG
+
 ## Meta-Goals
 
 Learn Music Theory From this
@@ -33,4 +35,24 @@ Drain our Ears From this
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements/runtime.in
+```
+
+## Usage
+
+Generating Midi
+
+```bash
+python music.py
+```
+
+Generating Individual Album Art
+
+```bash
+python art.py
+```
+
+Generate Music Video
+
+```bash
+./hit_machine Trees
 ```
